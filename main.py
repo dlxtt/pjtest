@@ -57,7 +57,7 @@ class protoProcesser():
     def doDisconnect(self):
         pass
     def doUnknow(self):
-        pass
+        pass 
     def doNewLogin(self):
         self.m_srh.wfile.write("PACKET_TYPE_WELCOME\r\n")
         self.m_srh
