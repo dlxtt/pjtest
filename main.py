@@ -46,7 +46,7 @@ class protoProcesser():
                     'PACKET_TYPE_UserList': self.doListenReady
                     }
 
-        while True:
+        while True: 
             data = str(self.m_srh.rfile.readline(),'utf-8').strip("\r\n")
             print(data)
             try:
@@ -57,7 +57,7 @@ class protoProcesser():
     def doDisconnect(self):
         pass
     def doUnknow(self):
-        pass 
+        pass
     def doNewLogin(self):
         self.m_srh.wfile.write("PACKET_TYPE_WELCOME\r\n")
         self.m_srh
