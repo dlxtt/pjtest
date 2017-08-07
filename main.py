@@ -20,7 +20,7 @@ class holeSocketServer(StreamRequestHandler):
 cmd_ip_port = ('0.0.0.0', 1231)
 hole_ip_port = ('0.0.0.0', 6751)
 
-
+   
 #协议综合处理
 class protoProcesser():
     # m_srh = ('',0)
