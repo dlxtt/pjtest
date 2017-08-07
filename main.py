@@ -17,10 +17,10 @@ class holeSocketServer(StreamRequestHandler):
         self.m_pp = protoProcesser(self)
         self.m_pp.dataProcess()
 
-cmd_ip_port = ('0.0.0.0', 1231)
-hole_ip_port = ('0.0.0.0', 6751)
+cmd_ip_port = ('0.0.0.0', 1232)
+hole_ip_port = ('0.0.0.0', 6752)
 
-   
+
 #协议综合处理
 class protoProcesser():
     # m_srh = ('',0)
@@ -60,6 +60,7 @@ class protoProcesser():
         pass
     def doNewLogin(self):
         self.m_srh.wfile.write("PACKET_TYPE_WELCOME\r\n")
+        self.m_srh
         pass
     def doLoginRet(self):
         pass
