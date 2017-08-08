@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # import socket
 from socketserver import ThreadingTCPServer,StreamRequestHandler
 import threading
@@ -17,9 +18,11 @@ class holeSocketServer(StreamRequestHandler):
         self.m_pp = protoProcesser(self)
         self.m_pp.dataProcess()
 
-cmd_ip_port = ('0.0.0.0', 1232)
-hole_ip_port = ('0.0.0.0', 6752)
+cmd_ip_port = ('0.0.0.0', 1231)
+hole_ip_port = ('0.0.0.0', 6751)
 
+#用户信息列表
+userlist = {}
 
 #协议综合处理
 class protoProcesser():
@@ -29,9 +32,9 @@ class protoProcesser():
 
         self.m_srh = srh
         self.m_peer = self.m_srh.request.getpeername()
-        addr = self.m_peer[0]
-        port = self.m_peer[1]
-        print("client address: %s %d" % (addr,port))
+        self.addr = self.m_peer[0]
+        self.port = self.m_peer[1]
+        print("client address: %s %d" % (self.addr,self.port))
 
     def dataProcess(self):
         cmdgroup = {'PACKET_TYPE_INVALID': self.doUnknow,
@@ -46,34 +49,68 @@ class protoProcesser():
                     'PACKET_TYPE_UserList': self.doListenReady
                     }
 
-        while True: 
+        keepalive = True
+        while keepalive:
             data = str(self.m_srh.rfile.readline(),'utf-8').strip("\r\n")
             print(data)
+
             try:
-                cmdgroup.get(data)()
+                keepalive = cmdgroup.get(data)()
             except:
                 print("unknow command")
+                keepalive = False
 
     def doDisconnect(self):
-        pass
+        return False
+
     def doUnknow(self):
-        pass
+        return False
+
+    # PORT1
     def doNewLogin(self):
-        self.m_srh.wfile.write("PACKET_TYPE_WELCOME\r\n")
-        self.m_srh
-        pass
+        try:
+            # 记录socket和端口
+            userInfo = {'cmdstream':self.m_srh,'cmdport':self.port}
+            userlist[self.addr] = userInfo
+
+            self.m_srh.wfile.write(b'PACKET_TYPE_WELCOME')
+        except:
+            print("do New Login Error")
+        return True
+
     def doLoginRet(self):
         pass
+    # PORT2 客户端发起主动连接请求
     def doConnClient(self):
-        pass
+        # 第二行为IP地址
+        toaddr = str(self.m_srh.rfile.readline(), 'utf-8').strip("\r\n")
+
+        #先记录打洞信息
+        userInfo = userlist[self.addr];
+        userInfo['holestream']=self.m_srh
+        userInfo['holeport']=self.port
+        userInfo['toaddr'] = toaddr
+
+        #PORT1 发起打动请求
+        destInfo = userlist[toaddr]
+        destInfo['toaddr'] = self.addr
+        destInfo['toport'] = self.port
+
+        destInfo['cmdstream'].wfile.write(b'')
+        return True
+
     def doMakeHole(self):
         pass
+
     def doDirectConn(self):
         pass
+
     def doListenReady(self):
         pass
+
     def doLogon(self):
         pass
+
     def doListenReady(self):
         pass
 
